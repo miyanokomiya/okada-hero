@@ -1,0 +1,47 @@
+{
+  "name": "okada-hero",
+  "version": "1.0.0",
+  "repository": "https://github.com/miyanokomiya/okada-hero.git",
+  "scripts": {
+    "tsc": "tsc",
+    "build": "parcel build src/index.html",
+    "start": "parcel src/index.html",
+    "lint": "eslint --ext .js,.ts ./",
+    "test": "jest --coverage"
+  },
+  "devDependencies": {
+    "@types/jest": "^24.0.23",
+    "@types/opentype": "^0.0.4",
+    "@types/react": "^16.9.11",
+    "@types/react-color": "^3.0.1",
+    "@types/react-dom": "^16.9.4",
+    "@types/react-test-renderer": "^16.9.1",
+    "@types/three": "^0.103.2",
+    "@typescript-eslint/eslint-plugin": "^2.8.0",
+    "@typescript-eslint/parser": "^2.8.0",
+    "babel-jest": "^24.9.0",
+    "coveralls": "^3.0.7",
+    "eslint": "^6.6.0",
+    "eslint-config-prettier": "^6.9.0",
+    "eslint-plugin-jest": "^23.0.4",
+    "eslint-plugin-prettier": "^3.1.1",
+    "eslint-plugin-react": "^7.16.0",
+    "eslint-plugin-react-hooks": "^2.3.0",
+    "jest": "^24.9.0",
+    "parcel-bundler": "^1.12.4",
+    "prettier": "^1.18.2",
+    "react-test-renderer": "^16.12.0",
+    "ts-jest": "^24.1.0",
+    "typescript": "^3.7.2"
+  },
+  "dependencies": {
+    "@material-ui/core": "^4.7.0",
+    "okageo": "^1.1.6",
+    "opentype.js": "^1.1.0",
+    "react": "^16.11.0",
+    "react-color": "^2.17.3",
+    "react-dom": "^16.11.0",
+    "three": "^0.112.1",
+    "three-orbitcontrols-ts": "^0.1.2"
+  }
+}
