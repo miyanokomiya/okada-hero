@@ -65,7 +65,7 @@ export default class App {
     }
     this.scene = new THREE.Scene()
     this.camera = new THREE.PerspectiveCamera(75, width / height, 1, 1000)
-    this.camera.position.set(5, -1, 8)
+    this.camera.position.set(16, -1, 30)
     this.camera.lookAt(0, 0, 0)
     this.material = new THREE.MeshBasicMaterial({
       color: this.style.fillStyle,
@@ -118,7 +118,7 @@ export default class App {
       mesh.translateY(center.y)
       mesh.translateZ(-depth / 2)
       mesh.rotateX(-Math.PI / 2)
-      mesh.rotateY(okageo.geo.getRadian(to, from))
+      mesh.rotateY(-okageo.geo.getRadian(to, from))
       wallGeometry.mergeMesh(mesh)
     })
 
@@ -137,12 +137,86 @@ export default class App {
     this.meshes.push(shapeMesh)
   }
 
+  splitShape(shape: ISvgPath, line: IVec2[]): ISvgPath[] {
+    // 包含ポリゴンと共に全て分割
+    let splited = okageo.geo.splitPolyByLine(shape.d, line)
+    if (splited.length < 2) return [shape]
+
+    // 本体と回転方向が一致しているかで分類
+    const rootLoopwise = okageo.geo.getLoopwise(shape.d)
+    const sameLoopwiseList: IVec2[][] = []
+    const oppositeLoopwiseList: IVec2[][] = []
+    shape.included!.forEach(s => {
+      if (okageo.geo.getLoopwise(s) === rootLoopwise) {
+        sameLoopwiseList.push(s)
+      } else {
+        oppositeLoopwiseList.push(s)
+      }
+    })
+
+    // 本体と同回転のものはそのまま分割
+    sameLoopwiseList.forEach(poly => {
+      const sp = okageo.geo.splitPolyByLine(poly, line)
+      splited = [...splited, ...(sp.length > 0 ? sp : [poly])]
+    })
+
+    // 本体と逆回転のものは特殊処理
+    const notPolyList: IVec2[][] = []
+    oppositeLoopwiseList.forEach(poly => {
+      const sp = okageo.geo.splitPolyByLine(poly, line)
+      if (sp.length > 0) {
+        // 分割されたらブーリアン差をとるために集める
+        notPolyList.push(poly)
+      } else {
+        // 分割なしならそのまま
+        splited.push(poly)
+      }
+    })
+
+    // 切断されたくり抜き領域を差し引いたポリゴンを生成
+    const splitedAfterNot = splited.map(s => {
+      return notPolyList.reduce((p, c) => {
+        return okageo.geo.getPolygonNotPolygon(p, c)
+      }, s)
+    })
+
+    // 包含関係で再度グルーピング
+    const groups = okageo.geo.getIncludedPolygonGroups(splitedAfterNot)
+
+    // 分割後shape生成
+    const splitedShapeList: ISvgPath[] = []
+    groups.forEach(group => {
+      const [path, ...included] = group
+      splitedShapeList.push({ d: path, included, style: shape.style })
+    })
+
+    return splitedShapeList
+  }
+
   async importFromString(text: string) {
     const pathInfoList = await parseFont(text, this.style)
-    const size = 10
+    let splited = pathInfoList.concat()
+    ;[...Array(100)].forEach((_, x) => {
+      const line = [
+        { x: -500 + x * 10, y: -500 },
+        { x: -500 + x * 10, y: 500 },
+      ]
+      let list: ISvgPath[] = []
+      splited.forEach(path => {
+        list = list.concat(this.splitShape(path, line))
+      })
+      splited = list
+    })
+
+    const size = 50
     okageo.svg
-      .fitRect(pathInfoList, -size / 2, -size / 2, size, size)
-      // .forEach((p, i) => (i === 0 ? this.createMesh(p) : ''))
+      .fitRect(
+        splited.map(path => ({ d: path.d, style: this.style })),
+        -size / 2,
+        -size / 2,
+        size,
+        size,
+      )
       .forEach(p => this.createMesh(p))
   }
 
