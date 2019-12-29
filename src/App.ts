@@ -7,7 +7,6 @@ export default class App {
   width: number
   height: number
   canvas: HTMLCanvasElement
-  style: ISvgStyle
   running = false
   scene: THREE.Scene
   renderer: THREE.WebGLRenderer
@@ -22,34 +21,33 @@ export default class App {
     this.width = width
     this.height = height
     this.canvas = canvas
-    this.style = {
-      ...okageo.svg.createStyle(),
-      fill: true,
-      fillStyle: 'green',
-      stroke: false,
-    }
-    this.scene = new THREE.Scene()
-    this.camera = new THREE.PerspectiveCamera(75, width / height, 1, 1000)
-    this.camera.position.set(16, -1, 30)
-    this.camera.lookAt(0, 0, 0)
     this.faceMaterial = new THREE.MeshBasicMaterial({
-      color: this.style.fillStyle,
       side: THREE.DoubleSide,
     })
     this.wallMaterial = new THREE.MeshBasicMaterial({
-      color: 'yellow',
       side: THREE.DoubleSide,
     })
 
+    this.scene = new THREE.Scene()
+    this.camera = new THREE.PerspectiveCamera(75, width / height, 1, 1000)
     this.renderer = new THREE.WebGLRenderer()
-    this.renderer.setSize(width, height)
-    this.renderer.setClearColor(0x000000)
+
+    canvas.innerHTML = ''
     canvas.appendChild(this.renderer.domElement)
     this.renderer.render(this.scene, this.camera)
 
     this.controls = new OrbitControls(this.camera, this.renderer.domElement)
     this.controls.update()
+
+    this.init()
     this.run()
+  }
+
+  init() {
+    this.camera.position.set(16, -1, 30)
+    this.camera.lookAt(0, 0, 0)
+    this.renderer.setSize(this.width, this.height)
+    this.renderer.setClearColor(0x000000)
   }
 
   animate = () => {
@@ -73,11 +71,12 @@ export default class App {
   }
 
   async importFromString(text: string) {
-    const pathInfoList = await parseFont(text, this.style)
+    const mockStyle = okageo.svg.createStyle()
+    const pathInfoList = await parseFont(text, mockStyle)
     const spaceSize = 50
     okageo.svg
       .fitRect(
-        splirtGrid(pathInfoList).map(path => ({ d: path.d, style: this.style })),
+        splirtGrid(pathInfoList).map(path => ({ d: path.d, style: mockStyle })),
         -spaceSize / 2,
         -spaceSize / 2,
         spaceSize,
@@ -86,8 +85,9 @@ export default class App {
       .forEach(p => this.createMesh(p))
   }
 
-  setStyle(style: { fillStyle: string }) {
-    this.style.fillStyle = style.fillStyle
+  setStyle(faceColor: string, wallColor: string) {
+    this.faceMaterial.color.set(faceColor)
+    this.wallMaterial.color.set(wallColor)
   }
 
   run() {
@@ -96,10 +96,7 @@ export default class App {
   }
 
   clear() {
-    this.blocks.forEach(b => {
-      this.scene.remove(b.face)
-      this.scene.remove(b.wall)
-    })
+    this.blocks.forEach(b => this.scene.remove(b.face, b.wall))
     this.blocks = []
   }
 

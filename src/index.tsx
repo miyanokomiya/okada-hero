@@ -10,7 +10,8 @@ export const App: React.FC = () => {
   const [count, refresh] = React.useState(0)
   const [config, setConfig] = React.useState({
     text: '岡田\n見てるか？',
-    fillStyle: 'green',
+    faceColor: 'green',
+    wallColor: 'yellow',
   })
 
   const onSubmit = React.useCallback(

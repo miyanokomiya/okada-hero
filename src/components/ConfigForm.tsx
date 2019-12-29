@@ -19,11 +19,21 @@ const OptionForm: React.FC<Props> = props => {
     setDraftText(e.currentTarget.value)
   }, [])
 
-  const onInputDraftFillStyle = React.useCallback(
+  const onInputFaceColor = React.useCallback(
     (color: ColorResult) => {
       props.onSubmit({
         ...props.config,
-        fillStyle: color.hex,
+        faceColor: color.hex,
+      })
+    },
+    [props],
+  )
+
+  const onInputWallColor = React.useCallback(
+    (color: ColorResult) => {
+      props.onSubmit({
+        ...props.config,
+        wallColor: color.hex,
       })
     },
     [props],
@@ -67,7 +77,8 @@ const OptionForm: React.FC<Props> = props => {
       <Grid container style={{ marginTop: '1rem' }} spacing={2}>
         <Grid item>
           <Typography>Fill</Typography>
-          <CompactPicker color={props.config.fillStyle} onChange={onInputDraftFillStyle} />
+          <CompactPicker color={props.config.faceColor} onChange={onInputFaceColor} />
+          <CompactPicker color={props.config.wallColor} onChange={onInputWallColor} />
         </Grid>
       </Grid>
     </form>
@@ -77,7 +88,8 @@ const OptionForm: React.FC<Props> = props => {
 OptionForm.propTypes = {
   config: PropTypes.shape({
     text: PropTypes.string.isRequired,
-    fillStyle: PropTypes.string.isRequired,
+    faceColor: PropTypes.string.isRequired,
+    wallColor: PropTypes.string.isRequired,
   }).isRequired,
   onSubmit: PropTypes.func.isRequired,
 }
