@@ -22,6 +22,7 @@ const OptionForm: React.FC<Props> = props => {
   const [draftText, setDraftText] = React.useState(props.config.text)
   const [draftGridSize, setDraftGridSize] = React.useState(props.config.gridSize)
   const [pathInfoList, setPathInfoList] = React.useState<ISvgPath[]>([])
+  const [invalidPathInfoList, setInvalidPathInfoList] = React.useState<ISvgPath[]>([])
 
   React.useEffect(() => {
     parseFont(draftText, okageo.svg.createStyle()).then(pathInfoList =>
@@ -30,7 +31,7 @@ const OptionForm: React.FC<Props> = props => {
   }, [draftText])
 
   React.useEffect(() => {
-    if (!canvasRef) return
+    if (!canvasRef || !canvasRef.current) return
     if (pathInfoList.length === 0) return
 
     const canvas = canvasRef.current as any
@@ -55,25 +56,45 @@ const OptionForm: React.FC<Props> = props => {
     ctx.clearRect(0, 0, canvas.width, canvas.height)
     okageo.svg
       .fitRect(
-        [...pathInfoList.map(p => ({ ...p, style })), ...gridList],
+        [
+          ...invalidPathInfoList.map(p => ({
+            ...p,
+            included: [],
+            style: { ...p.style, fill: true, fillStyle: 'red' },
+          })),
+          ...pathInfoList.map(p => ({ ...p, style })),
+          ...gridList,
+        ],
         0,
         0,
         canvas.width,
         canvas.height,
       )
-      .forEach(p => {
-        okageo.svg.draw(ctx, p)
-      })
-  }, [props.width, props.config.faceColor, props.config.wallColor, pathInfoList, draftGridSize])
+      .forEach(p => okageo.svg.draw(ctx, p))
+  }, [
+    props.width,
+    props.config.faceColor,
+    props.config.wallColor,
+    pathInfoList,
+    draftGridSize,
+    invalidPathInfoList,
+  ])
+
+  React.useEffect(() => {
+    setInvalidPathInfoList(
+      splitPathListByGrid(pathInfoList, draftGridSize).filter(
+        p => p.included && p.included.length > 0,
+      ),
+    )
+  }, [draftGridSize, pathInfoList])
 
   const InvalidGrid = React.useMemo(() => {
-    const splited = splitPathListByGrid(pathInfoList, draftGridSize)
-    return splited.find(p => p.included && p.included.length > 0) ? (
+    return invalidPathInfoList.length > 0 ? (
       <Typography color="error">Invalid Grid! It must be more narrow.</Typography>
     ) : (
       ''
     )
-  }, [pathInfoList, draftGridSize])
+  }, [invalidPathInfoList.length])
 
   const onInputDraftText = React.useCallback((e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setDraftText(e.currentTarget.value)
@@ -175,8 +196,8 @@ const OptionForm: React.FC<Props> = props => {
       <Grid container style={{ marginTop: '1rem' }}>
         <Grid item xs={12} sm={6}>
           <Typography>Grid</Typography>
-          {InvalidGrid}
           <Slider step={1} min={5} max={30} value={draftGridSize} onChange={onInputGridSize} />
+          {InvalidGrid}
         </Grid>
         <Grid item xs={12}>
           <canvas
