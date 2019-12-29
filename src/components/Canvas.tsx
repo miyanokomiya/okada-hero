@@ -1,5 +1,4 @@
 import * as React from 'react'
-import * as THREE from 'three'
 import PropTypes from 'prop-types'
 import Grid from '@material-ui/core/Grid'
 import Button from '@material-ui/core/Button'
@@ -39,8 +38,8 @@ const Canvas: React.FC<Props> = props => {
   React.useEffect(() => {
     if (!app) return
     app.clear()
-    app.importFromString(props.config.text)
-  }, [app, props.config.text])
+    app.importFromString(props.config.text, props.config.gridSize)
+  }, [app, props.config.gridSize, props.config.text, props.count])
 
   const onClickToggle = React.useCallback(() => {
     if (!app) return
@@ -68,6 +67,8 @@ Canvas.propTypes = {
     text: PropTypes.string.isRequired,
     faceColor: PropTypes.string.isRequired,
     wallColor: PropTypes.string.isRequired,
+    rotateSpeed: PropTypes.number.isRequired,
+    gridSize: PropTypes.number.isRequired,
   }).isRequired,
   count: PropTypes.number.isRequired,
 }

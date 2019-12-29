@@ -115,30 +115,31 @@ export function getMaxSize(
   }
 }
 
-export function splirtGrid(pathInfoList: ISvgPath[]): ISvgPath[] {
-  const gridSize = 10
-  const size = getMaxSize(pathInfoList)
-  let splited = pathInfoList.concat()
-  ;[...Array(Math.ceil(size.width / gridSize))].forEach((_, i) => {
-    if (i === 0) return
+export function getGrid(pathInfoList: ISvgPath[], gridSize: number): IVec2[][] {
+  if (pathInfoList.length === 0) return []
 
-    const line = [
+  const size = getMaxSize(pathInfoList)
+  const [_, ...gridXList] = [...Array(Math.ceil(size.width / gridSize))].map((_, i) => {
+    return [
       { x: size.x + i * gridSize, y: size.y },
       { x: size.x + i * gridSize, y: size.y + size.height },
     ]
-    let list: ISvgPath[] = []
-    splited.forEach(path => {
-      list = list.concat(splitShape(path, line))
-    })
-    splited = list
   })
-  ;[...Array(Math.ceil(size.height / gridSize))].forEach((_, i) => {
-    if (i === 0) return
-
-    const line = [
+  const [__, ...gridYList] = [...Array(Math.ceil(size.height / gridSize))].map((_, i) => {
+    return [
       { x: size.x, y: size.y + i * gridSize },
       { x: size.x + size.width, y: size.y + i * gridSize },
     ]
+  })
+
+  return [...gridXList, ...gridYList]
+}
+
+export function splitPathListByGrid(pathInfoList: ISvgPath[], gridSize: number): ISvgPath[] {
+  const gridList = getGrid(pathInfoList, gridSize)
+  let splited = pathInfoList.concat()
+
+  gridList.forEach(line => {
     let list: ISvgPath[] = []
     splited.forEach(path => {
       list = list.concat(splitShape(path, line))

@@ -2,7 +2,7 @@ import * as THREE from 'three'
 import TWEEN from '@tweenjs/tween.js'
 import { OrbitControls } from 'three-orbitcontrols-ts'
 import okageo, { ISvgPath, ISvgStyle } from 'okageo'
-import { parseFont, splirtGrid, IBlock, craeteBlock } from './utils'
+import { parseFont, splitPathListByGrid, IBlock, craeteBlock } from './utils'
 
 export default class App {
   width: number
@@ -117,13 +117,13 @@ export default class App {
     this.spreaded = !this.spreaded
   }
 
-  async importFromString(text: string) {
+  async importFromString(text: string, gridSize = 10) {
     const mockStyle = okageo.svg.createStyle()
     const pathInfoList = await parseFont(text, mockStyle)
     const spaceSize = 50
     okageo.svg
       .fitRect(
-        splirtGrid(pathInfoList).map(path => ({ d: path.d, style: mockStyle })),
+        splitPathListByGrid(pathInfoList, gridSize).map(path => ({ d: path.d, style: mockStyle })),
         -spaceSize / 2,
         -spaceSize / 2,
         spaceSize,
@@ -147,6 +147,9 @@ export default class App {
   }
 
   clear() {
+    this.spreaded = false
+    this.tweens.forEach(t => t.stop())
+    this.tweens = []
     this.blocks.forEach(b => this.scene.remove(b.face, b.wall))
     this.blocks = []
   }

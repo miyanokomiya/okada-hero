@@ -3,4 +3,5 @@ export interface IConfig {
   faceColor: string
   wallColor: string
   rotateSpeed: number
+  gridSize: number
 }

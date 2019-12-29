@@ -13,6 +13,7 @@ const defaultConfig = {
   faceColor: 'green',
   wallColor: 'yellow',
   rotateSpeed: 0,
+  gridSize: 10,
 }
 const restoredConfig = {
   ...defaultConfig,
@@ -41,7 +42,7 @@ export const App: React.FC = () => {
         count={count}
       />
       <div style={{ marginTop: '1rem' }}>
-        <ConfigForm config={config} onSubmit={onSubmit} />
+        <ConfigForm width={window.innerWidth - 16} config={config} onSubmit={onSubmit} />
       </div>
       <Link href="https://github.com/miyanokomiya/okada-hero">Github</Link>
     </div>
