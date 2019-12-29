@@ -1,6 +1,8 @@
 import * as React from 'react'
 import * as THREE from 'three'
 import PropTypes from 'prop-types'
+import Grid from '@material-ui/core/Grid'
+import Button from '@material-ui/core/Button'
 import { IConfig } from '../types'
 import App from '../App'
 
@@ -39,9 +41,21 @@ const Canvas: React.FC<Props> = props => {
     app.importFromString(props.config.text)
   }, [app, props.config.text])
 
+  const onClickToggle = React.useCallback(() => {
+    if (!app) return
+    app.spread()
+  }, [app])
+
   return (
     <div>
       <div ref={canvasRef} />
+      <Grid container spacing={2}>
+        <Grid item>
+          <Button variant="contained" onClick={onClickToggle}>
+            Action
+          </Button>
+        </Grid>
+      </Grid>
     </div>
   )
 }

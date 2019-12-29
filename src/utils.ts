@@ -116,12 +116,15 @@ export function getMaxSize(
 }
 
 export function splirtGrid(pathInfoList: ISvgPath[]): ISvgPath[] {
+  const gridSize = 10
   const size = getMaxSize(pathInfoList)
   let splited = pathInfoList.concat()
-  ;[...Array(Math.ceil(size.width / 10))].forEach((_, i) => {
+  ;[...Array(Math.ceil(size.width / gridSize))].forEach((_, i) => {
+    if (i === 0) return
+
     const line = [
-      { x: size.x + i * 10, y: size.y },
-      { x: size.x + i * 10, y: size.y + size.height },
+      { x: size.x + i * gridSize, y: size.y },
+      { x: size.x + i * gridSize, y: size.y + size.height },
     ]
     let list: ISvgPath[] = []
     splited.forEach(path => {
@@ -129,10 +132,12 @@ export function splirtGrid(pathInfoList: ISvgPath[]): ISvgPath[] {
     })
     splited = list
   })
-  ;[...Array(Math.ceil(size.height / 10))].forEach((_, i) => {
+  ;[...Array(Math.ceil(size.height / gridSize))].forEach((_, i) => {
+    if (i === 0) return
+
     const line = [
-      { x: size.x, y: size.y + i * 10 },
-      { x: size.x + size.width, y: size.y + i * 10 },
+      { x: size.x, y: size.y + i * gridSize },
+      { x: size.x + size.width, y: size.y + i * gridSize },
     ]
     let list: ISvgPath[] = []
     splited.forEach(path => {

@@ -1,4 +1,5 @@
 import * as THREE from 'three'
+import TWEEN from '@tweenjs/tween.js'
 import { OrbitControls } from 'three-orbitcontrols-ts'
 import okageo, { ISvgPath, ISvgStyle } from 'okageo'
 import { parseFont, splirtGrid, IBlock, craeteBlock } from './utils'
@@ -15,6 +16,8 @@ export default class App {
   faceMaterial: THREE.MeshBasicMaterial
   wallMaterial: THREE.MeshBasicMaterial
   blocks: IBlock[] = []
+  tweens: TWEEN.Tween[] = []
+  spreaded = false
 
   constructor(args: { canvas: HTMLCanvasElement; width: number; height: number }) {
     const { width, height, canvas } = args
@@ -37,6 +40,9 @@ export default class App {
     this.renderer.render(this.scene, this.camera)
 
     this.controls = new OrbitControls(this.camera, this.renderer.domElement)
+    this.controls.enableZoom = true
+    this.controls.autoRotate = true
+    this.controls.autoRotateSpeed = -4
     this.controls.update()
 
     this.init()
@@ -44,21 +50,25 @@ export default class App {
   }
 
   init() {
-    this.camera.position.set(16, -1, 30)
+    this.camera.position.set(16, -5, 30)
     this.camera.lookAt(0, 0, 0)
     this.renderer.setSize(this.width, this.height)
     this.renderer.setClearColor(0x000000)
   }
 
-  animate = () => {
+  animate = (time = 0) => {
     if (!this.running) return
 
-    this.blocks.forEach(b => {
-      const axis = new THREE.Vector3(1, 0, 0).normalize()
-      const rad = Math.PI / 180 / 2
-      b.face.rotateOnWorldAxis(axis, rad)
-      b.wall.rotateOnWorldAxis(axis, rad)
-    })
+    if (this.spreaded) {
+      this.blocks.forEach(b => {
+        const axis = new THREE.Vector3(1, 0, 0).normalize()
+        const rad = Math.PI / 180 / 2
+        b.face.rotateOnWorldAxis(axis, rad)
+        b.wall.rotateOnWorldAxis(axis, rad)
+      })
+    }
+
+    TWEEN.update(time)
     this.controls.update()
     this.renderer.render(this.scene, this.camera)
     requestAnimationFrame(this.animate)
@@ -68,6 +78,43 @@ export default class App {
     const block = craeteBlock(pathInfo, this.faceMaterial, this.wallMaterial)
     this.scene.add(block.face, block.wall)
     this.blocks.push(block)
+  }
+
+  spread() {
+    this.tweens.forEach(t => t.stop())
+    this.tweens = []
+    const randomPos = () => (Math.random() - 0.5) * 30 + 3
+    const randomRot = () => Math.floor(Math.random() * 10)
+
+    this.blocks.forEach(b => {
+      const to = this.spreaded
+        ? b.position
+        : {
+            x: randomPos(),
+            y: randomPos(),
+            z: randomPos(),
+          }
+      const rotPlus = randomRot()
+
+      this.tweens = this.tweens.concat(
+        [b.face.position, b.wall.position].map(p => {
+          return new TWEEN.Tween(p)
+            .to(to, 3000)
+            .easing(TWEEN.Easing.Quadratic.InOut)
+            .start()
+        }),
+      )
+      this.tweens = this.tweens.concat(
+        [b.face.rotation, b.wall.rotation].map(r => {
+          return new TWEEN.Tween(r)
+            .to({ x: (Math.floor(r.x / (Math.PI * 2)) + rotPlus) * Math.PI * 2 }, 3000)
+            .easing(TWEEN.Easing.Quadratic.InOut)
+            .start()
+        }),
+      )
+    })
+
+    this.spreaded = !this.spreaded
   }
 
   async importFromString(text: string) {
