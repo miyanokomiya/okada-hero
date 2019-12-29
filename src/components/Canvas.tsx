@@ -32,7 +32,8 @@ const Canvas: React.FC<Props> = props => {
   React.useEffect(() => {
     if (!app) return
     app.setStyle(props.config.faceColor, props.config.wallColor)
-  }, [app, props.config.faceColor, props.config.wallColor])
+    app.setRotateSpeed(props.config.rotateSpeed)
+  }, [app, props.config.faceColor, props.config.rotateSpeed, props.config.wallColor])
 
   // テキストインポート
   React.useEffect(() => {

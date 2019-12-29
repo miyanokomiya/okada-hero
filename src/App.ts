@@ -137,6 +137,10 @@ export default class App {
     this.wallMaterial.color.set(wallColor)
   }
 
+  setRotateSpeed(speed: number) {
+    this.controls.autoRotateSpeed = speed
+  }
+
   run() {
     this.running = true
     this.animate()

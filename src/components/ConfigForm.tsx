@@ -3,6 +3,7 @@ import Grid from '@material-ui/core/Grid'
 import Button from '@material-ui/core/Button'
 import TextField from '@material-ui/core/TextField'
 import Typography from '@material-ui/core/Typography'
+import Slider from '@material-ui/core/Slider'
 import { CompactPicker, ColorResult } from 'react-color'
 import PropTypes from 'prop-types'
 import { IConfig } from '../types'
@@ -34,6 +35,16 @@ const OptionForm: React.FC<Props> = props => {
       props.onSubmit({
         ...props.config,
         wallColor: color.hex,
+      })
+    },
+    [props],
+  )
+
+  const onInputRotateSpeed = React.useCallback(
+    (_, value: any) => {
+      props.onSubmit({
+        ...props.config,
+        rotateSpeed: value,
       })
     },
     [props],
@@ -76,9 +87,25 @@ const OptionForm: React.FC<Props> = props => {
       </Grid>
       <Grid container style={{ marginTop: '1rem' }} spacing={2}>
         <Grid item>
-          <Typography>Fill</Typography>
+          <Typography>Face</Typography>
           <CompactPicker color={props.config.faceColor} onChange={onInputFaceColor} />
+        </Grid>
+        <Grid item>
+          <Typography>Wall</Typography>
           <CompactPicker color={props.config.wallColor} onChange={onInputWallColor} />
+        </Grid>
+      </Grid>
+      <Grid container style={{ marginTop: '1rem' }} spacing={2}>
+        <Grid item xs={12} sm={6}>
+          <Typography>Auto Rotation</Typography>
+          <Slider
+            marks={[{ value: 0, label: '0' }]}
+            step={0.5}
+            min={-10}
+            max={10}
+            value={props.config.rotateSpeed}
+            onChange={onInputRotateSpeed}
+          />
         </Grid>
       </Grid>
     </form>
@@ -90,6 +117,7 @@ OptionForm.propTypes = {
     text: PropTypes.string.isRequired,
     faceColor: PropTypes.string.isRequired,
     wallColor: PropTypes.string.isRequired,
+    rotateSpeed: PropTypes.number.isRequired,
   }).isRequired,
   onSubmit: PropTypes.func.isRequired,
 }
