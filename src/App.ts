@@ -1,7 +1,7 @@
 import * as THREE from 'three'
 import TWEEN from '@tweenjs/tween.js'
 import { OrbitControls } from 'three-orbitcontrols-ts'
-import okageo, { ISvgPath, ISvgStyle } from 'okageo'
+import okageo, { ISvgPath } from 'okageo'
 import { parseFont, splitPathListByGrid, IBlock, craeteBlock } from './utils'
 
 export default class App {
