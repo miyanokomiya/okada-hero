@@ -2776,10 +2776,10 @@ eslint-plugin-eslint-plugin@^2.1.0:
   resolved "https://registry.yarnpkg.com/eslint-plugin-eslint-plugin/-/eslint-plugin-eslint-plugin-2.1.0.tgz#a7a00f15a886957d855feacaafee264f039e62d5"
   integrity sha512-kT3A/ZJftt28gbl/Cv04qezb/NQ1dwYIbi8lyf806XMxkus7DvOVCLIfTXMrorp322Pnoez7+zabXH29tADIDg==
 
-eslint-plugin-jest@^23.0.4:
-  version "23.1.1"
-  resolved "https://registry.yarnpkg.com/eslint-plugin-jest/-/eslint-plugin-jest-23.1.1.tgz#1220ab53d5a4bf5c3c4cd07c0dabc6199d4064dd"
-  integrity sha512-2oPxHKNh4j1zmJ6GaCBuGcb8FVZU7YjFUOJzGOPnl9ic7VA/MGAskArLJiRIlnFUmi1EUxY+UiATAy8dv8s5JA==
+eslint-plugin-jest@^23.2.0:
+  version "23.2.0"
+  resolved "https://registry.yarnpkg.com/eslint-plugin-jest/-/eslint-plugin-jest-23.2.0.tgz#72d9ac0421b9b6ef774bcf4783329c016ed7cd6a"
+  integrity sha512-/jbCUW+g0jejXAvsytgcNhii6uEgolt0RO2e4+mhmXybfkcram5V3XIyrHCnUsb0vCmDKgHhJ1lYSm7F3VCEDA==
   dependencies:
     "@typescript-eslint/experimental-utils" "^2.5.0"
 
@@ -5137,10 +5137,10 @@ object.values@^1.1.0:
     function-bind "^1.1.1"
     has "^1.0.3"
 
-okageo@^1.1.6:
-  version "1.1.7"
-  resolved "https://registry.yarnpkg.com/okageo/-/okageo-1.1.7.tgz#7c7bf33b0c2f0e224cab980454fa62fe2532c9b2"
-  integrity sha512-17H3NejjjEdYjTPkLlwxZQWeG1F19/sc1CEkhCG0WObEbKX05vYAQXZEL28OjmGOBMGmlkIfEBAPrp24n92l7w==
+okageo@^1.1.10:
+  version "1.1.10"
+  resolved "https://registry.yarnpkg.com/okageo/-/okageo-1.1.10.tgz#04c2673ea121694d9986c28a6161cde7b458ae57"
+  integrity sha512-kyYYtOo3jjDw675M4dYuxU9gMGlos+OOcW6dbOfCZgYd7ynnP5sWN/37QFxuDfiXq2+Uubwq6/ao8GBOJH8VkA==
   dependencies:
     bili "^4.8.1"
 

@@ -37,104 +37,14 @@ export async function parseFont(text: string, style: ISvgStyle): Promise<ISvgPat
     )
   })
 
-  return okageo.geo.getIncludedPolygonGroups(pathList).map(group => {
-    const [d, ...included] = group
-    return { d, included, style }
-  })
+  return okageo.svg.getGroupedPathList(pathList, style)
 }
 export function splitShape(shape: ISvgPath, line: IVec2[]): ISvgPath[] {
-  let splited = okageo.geo.splitPolyByLine(shape.d, line)
-  if (splited.length < 2) return [shape]
-
-  // 本体と回転方向が一致しているかで分類
-  const rootLoopwise = okageo.geo.getLoopwise(shape.d)
-  const sameLoopwiseList: IVec2[][] = []
-  const oppositeLoopwiseList: IVec2[][] = []
-  if (shape.included) {
-    shape.included.forEach(s => {
-      if (okageo.geo.getLoopwise(s) === rootLoopwise) {
-        sameLoopwiseList.push(s)
-      } else {
-        oppositeLoopwiseList.push(s)
-      }
-    })
-  }
-
-  // 本体と同回転のものはそのまま分割
-  sameLoopwiseList.forEach(poly => {
-    const sp = okageo.geo.splitPolyByLine(poly, line)
-    splited = [...splited, ...(sp.length > 0 ? sp : [poly])]
-  })
-
-  // 本体と逆回転のものは特殊処理
-  const notPolyList: IVec2[][] = []
-  oppositeLoopwiseList.forEach(poly => {
-    const sp = okageo.geo.splitPolyByLine(poly, line)
-    if (sp.length > 0) {
-      // 分割されたらブーリアン差をとるために集める
-      notPolyList.push(poly)
-    } else {
-      // 分割なしならそのまま
-      splited.push(poly)
-    }
-  })
-
-  // 切断されたくり抜き領域を差し引いたポリゴンを生成
-  const splitedAfterNot = splited.map(s =>
-    notPolyList.reduce((p, c) => okageo.geo.getPolygonNotPolygon(p, c), s),
-  )
-
-  return okageo.geo.getIncludedPolygonGroups(splitedAfterNot).map(group => {
-    const [path, ...included] = group
-    return { d: path, included, style: shape.style }
-  })
-}
-
-export function getMaxSize(
-  pathInfoList: ISvgPath[],
-): { x: number; y: number; width: number; height: number } {
-  let minX = Infinity
-  let minY = Infinity
-  let maxX = -Infinity
-  let maxY = -Infinity
-
-  pathInfoList.forEach(path =>
-    path.d.forEach(v => {
-      minX = Math.min(minX, v.x)
-      minY = Math.min(minY, v.y)
-      maxX = Math.max(maxX, v.x)
-      maxY = Math.max(maxY, v.y)
-    }),
-  )
-
-  return {
-    x: minX,
-    y: minY,
-    width: maxX - minX,
-    height: maxY - minY,
-  }
+  return okageo.svg.splitPath(shape, line)
 }
 
 export function getGrid(pathInfoList: ISvgPath[], gridSize: number): IVec2[][] {
-  if (pathInfoList.length === 0) return []
-
-  const size = getMaxSize(pathInfoList)
-  const gridXList = [...Array(Math.ceil(size.width / gridSize))].map((_, i) => {
-    return [
-      { x: size.x + i * gridSize, y: size.y },
-      { x: size.x + i * gridSize, y: size.y + size.height },
-    ]
-  })
-  const gridYList = [...Array(Math.ceil(size.height / gridSize))].map((_, i) => {
-    return [
-      { x: size.x, y: size.y + i * gridSize },
-      { x: size.x + size.width, y: size.y + i * gridSize },
-    ]
-  })
-
-  gridXList.shift()
-  gridYList.shift()
-  return [...gridXList, ...gridYList]
+  return okageo.geo.getGrid(okageo.geo.getOuterRectangle(pathInfoList.map(p => p.d)), gridSize)
 }
 
 export function splitPathListByGrid(pathInfoList: ISvgPath[], gridSize: number): ISvgPath[] {
@@ -158,7 +68,7 @@ export function craeteBlock(
   wallMaterial: THREE.Material,
 ): IBlock {
   const depth = 2
-  const size2D = getMaxSize([pathInfo])
+  const size2D = okageo.geo.getOuterRectangle([pathInfo.d])
   const center = new THREE.Vector3(
     size2D.x + size2D.width / 2,
     -(size2D.y + size2D.height / 2),
