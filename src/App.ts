@@ -122,76 +122,76 @@ export default class App {
     const pathInfoList = await parseFont(text, mockStyle)
     const spaceSize = 50
 
-    // const round = (f: number): number => Math.round(f * 1000000) / 1000000
-    // const pathList = okageo.svg
-    //   .fitRect(
-    //     splitPathListByGrid(pathInfoList, gridSize).map(path => ({
-    //       d: path.d,
-    //       style: mockStyle,
-    //     })),
-    //     -0.5,
-    //     -0.5,
-    //     1,
-    //     1,
-    //   )
-    //   .map(path => ({ ...path, d: path.d.map(p => ({ x: round(p.x), y: round(p.y) })) }))
-    // console.log(pathList)
+    const round = (f: number): number => Math.round(f * 1000000) / 1000000
+    const pathList = okageo.svg
+      .fitRect(
+        splitPathListByGrid(pathInfoList, gridSize).map(path => ({
+          d: path.d,
+          style: mockStyle,
+        })),
+        -0.5,
+        -0.5,
+        1,
+        1,
+      )
+      .map(path => ({ ...path, d: path.d.map(p => ({ x: round(p.x), y: round(p.y) })) }))
+    console.log(pathList)
 
-    // console.log(
-    //   '[' +
-    //     pathList
-    //       .map(
-    //         path =>
-    //           '[' +
-    //           path.d
-    //             .map((p, i) => {
-    //               const next = path.d[(i + 1) % path.d.length]
-    //               return (
-    //                 '(' +
-    //                 [
-    //                   { ...p, z: 0.1 },
-    //                   { ...next, z: 0.1 },
-    //                   { ...p, z: -0.1 },
-    //                 ]
-    //                   .map(p => `vec3 ${p.x} ${-p.y} ${p.z}`)
-    //                   .join(', ') +
-    //                 '), (' +
-    //                 [
-    //                   { ...next, z: 0.1 },
-    //                   { ...next, z: -0.1 },
-    //                   { ...p, z: -0.1 },
-    //                 ]
-    //                   .map(p => `vec3 ${p.x} ${-p.y} ${p.z}`)
-    //                   .join(', ') +
-    //                 ')'
-    //               )
-    //             })
-    //             .join('\n,') +
-    //           ']',
-    //       )
-    //       .join('\n,') +
-    //     ',\n' +
-    //     pathList
-    //       .map(
-    //         path =>
-    //           '[' +
-    //           okageo.geo
-    //             .triangleSplit(path.d)
-    //             .map(tri => {
-    //               return (
-    //                 '(' +
-    //                 tri.map(p => `vec3 ${p.x} ${-p.y} 0.1`).join(', ') +
-    //                 '), (' +
-    //                 tri.map(p => `vec3 ${p.x} ${-p.y} -0.1`).join(', ') +
-    //                 ')'
-    //               )
-    //             })
-    //             .join('\n,') +
-    //           ']',
-    //       )
-    //       .join('\n,') +
-    //     ']',
-    // )
+    console.log(
+      'bbbbbb = [' +
+        pathList
+          .map(
+            path =>
+              '[' +
+              path.d
+                .map((p, i) => {
+                  const next = path.d[(i + 1) % path.d.length]
+                  return (
+                    '(' +
+                    [
+                      { ...p, z: 0.1 },
+                      { ...next, z: 0.1 },
+                      { ...p, z: -0.1 },
+                    ]
+                      .map(p => `vec3 ${p.x} ${-p.y} ${p.z}`)
+                      .join(', ') +
+                    '), (' +
+                    [
+                      { ...next, z: 0.1 },
+                      { ...next, z: -0.1 },
+                      { ...p, z: -0.1 },
+                    ]
+                      .map(p => `vec3 ${p.x} ${-p.y} ${p.z}`)
+                      .join(', ') +
+                    ')'
+                  )
+                })
+                .join('\n,') +
+              ']',
+          )
+          .join('\n,') +
+        ']\naaaaa = [' +
+        pathList
+          .map(
+            path =>
+              '[' +
+              okageo.geo
+                .triangleSplit(path.d)
+                .map(tri => {
+                  return (
+                    '(' +
+                    tri.map(p => `vec3 ${p.x} ${-p.y} 0.1`).join(', ') +
+                    '), (' +
+                    tri.map(p => `vec3 ${p.x} ${-p.y} -0.1`).join(', ') +
+                    ')'
+                  )
+                })
+                .join('\n,') +
+              ']',
+          )
+          .join('\n,') +
+        ']',
+    )
 
     okageo.svg
       .fitRect(
