@@ -42,7 +42,7 @@
     "react": "^16.11.0",
     "react-color": "^2.18.0",
     "react-dom": "^16.11.0",
-    "three": "^0.112.1",
+    "three": "^0.116.1",
     "three-orbitcontrols-ts": "^0.1.2"
   }
 }
