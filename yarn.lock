@@ -7299,10 +7299,10 @@ three-orbitcontrols-ts@^0.1.2:
   dependencies:
     three "^0.83.0"
 
-three@*, three@^0.112.1:
-  version "0.112.1"
-  resolved "https://registry.yarnpkg.com/three/-/three-0.112.1.tgz#f8d8f4d0f8e5f753dac6260491b8209457fdc131"
-  integrity sha512-8I0O74hiYtKl3LgDNcPJbBGOlpekbcJ6fJnImmW3mFdeUFJ2H9Y3/UuUSW2sBdjrIlCM0gvOkaTEFlofO900TQ==
+three@*, three@^0.119.0:
+  version "0.119.0"
+  resolved "https://registry.yarnpkg.com/three/-/three-0.119.0.tgz#a895b2487893b525cb42be754fe9fba9842696c0"
+  integrity sha512-mZgc+zW5SdwZt+bGgfGZlouMuisvwx+rlh2p51curZ0dnMIp4UbdVs12zrTPzPwJffQRATm9WgLFeAi/ucnlCQ==
 
 three@^0.83.0:
   version "0.83.0"
